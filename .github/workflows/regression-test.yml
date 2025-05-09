@@ -10,7 +10,7 @@ on:
 
 jobs:
   build-matrix:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
@@ -27,13 +27,13 @@ jobs:
       - name: Retrieve regression test matrix
         id: set-matrix
         run: |
-          response=$(curl -H "Authorization: ${{ steps.idtoken.outputs.id_token }}" https://udediaagwykgvdxfgrnw.supabase.co/functions/v1/autograder-retrieve-autograder-regression-tests)
+          response=$(curl -H "Authorization: ${{ steps.idtoken.outputs.id_token }}" https://api.pawtograder.com/functions/v1/autograder-retrieve-autograder-regression-tests)
           echo "matrix=$response" >> $GITHUB_OUTPUT
         shell: bash
   smoke-test:
-    name: Submit and Grade Assignment
+    name: Run a student submission through the autograder
     needs: build-matrix
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       matrix: ${{fromJson(needs.build-matrix.outputs.matrix)}}
     steps:
@@ -43,10 +43,9 @@ jobs:
         with:
           path: submission
       - name: Collect Submission and Run Grader
-        uses: neu-se/autograder-action@heads/main
+        uses: pawtograder/assignment-action@main
         with:
           grading_server: 'https://udediaagwykgvdxfgrnw.supabase.co'
-          handout_repo: 'pawtograder-playground/demo-java-project-handout'
           regression_test_job: '${{ matrix.configs.id }}'
           action_ref: '${{ github.action_ref }}'
           action_repository: '${{ github.action_repository }}'
