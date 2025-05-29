@@ -22,8 +22,13 @@ gradedParts:
           - com.pawtograder.example.java.EntrypointTest.
         points: 10
         testCount: 9
-  - name: []
-  submissionFiles:
+  - name: Task 2 - Putting The Pieces Back Together
+    gradedUnits:
+      - name: More Entrypoint Stuff
+        points: 10
+        testCount: 6
+        tests: com.pawtograder.example.java.EntrypointTestPart2
+submissionFiles:
   files:
     - 'src/main/java/com/pawtograder/example/java/Entrypoint.java'
   testFiles:
